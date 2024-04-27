@@ -11,7 +11,7 @@ dotenv.config()
 // https://vitejs.dev/config/
 let config = {
     root: "./web",
-    base: "/apps/ops/",
+    base: "aigc_prompt/",
     server: {
         port: 12833,
         host: "0.0.0.0",

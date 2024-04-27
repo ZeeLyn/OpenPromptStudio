@@ -1,7 +1,8 @@
 import Vue from "vue"
 import FloatingVue from 'floating-vue'
 import 'floating-vue/dist/style.css'
-
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 // ----------------- 全局组件 -----–––––––––––––––-
 import { Icon as vIcon } from "@iconify/vue2"
 // ----------------------–––––––––––––––-
@@ -14,6 +15,7 @@ export function bootVue(setVueHandler?: (VueConstructor: typeof Vue) => any) {
     // --------––––––––––––––––––––––––––––––
     Vue.component("Icon", vIcon)
     Vue.use(FloatingVue)
+    Vue.use(ElementUI);
     // --------––––––––––––––––––––––––––––––
     let router = getPagesRouter(Vue)
     let vueIns = new Vue({

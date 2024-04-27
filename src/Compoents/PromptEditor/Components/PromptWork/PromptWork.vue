@@ -61,11 +61,25 @@
                 </div>
                 <div class="line more-options">
                     <select v-model="inputParser" class="parser-select" v-tooltip="`提示词语法类型`">
-                        <option value="midjourney">Midjourney</option>
                         <option value="stable-diffusion-webui">stable-diffusion-webui</option>
+                        <option value="midjourney">Midjourney</option>
                     </select>
                     <button @click="doDeleteWorkspace()" v-tooltip="`删除工作区`" class="icon">
                         <Icon icon="radix-icons:trash" />
+                    </button>
+                </div>
+                <div class="line more-options">
+                    <button
+                        @click="doGen()"
+                        v-tooltip="`文生图`"
+                        :disabled="loading || !outputText || outputText.len == 0"
+                        style="background: #29bbff; color: #fff"
+                    >
+                        <Icon icon="radix-icons:update" v-if="loading" class="loading" />
+                        <Icon icon="radix-icons:paper-plane" v-else />
+
+                        <template v-if="loading">正在生成...</template>
+                        <template v-else>开始生成</template>
                     </button>
                 </div>
             </div>
@@ -119,9 +133,47 @@
             </div>
         </div>
         <PromptMenu ref="menu"></PromptMenu>
+        <template v-if="img">
+            <div class="show_img" @click.prevent.stop>
+                <img :src="'https://web.inlarks.com/' + img" />
+            </div>
+            <button
+                class="icon"
+                style="position: fixed; top: 20px; left: 20px; z-index: 101"
+                @click.prevent.stop="closeHandler"
+            >
+                <Icon icon="radix-icons:cross-circled"></Icon>
+            </button>
+        </template>
     </div>
 </template>
 <style lang="scss">
+.show_img {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($color: #000000, $alpha: 0.9);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.show_img img {
+    max-width: 100%;
+}
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.loading {
+    animation: loading 2s linear infinite;
+}
 .PromptEditor .PromptWork {
     padding: var(--padding-4) 0;
     --margin-left: 80px;
@@ -429,6 +481,7 @@ import { getImageSize } from "html-to-image/src/util"
 import download from "downloadjs"
 import { PromptList } from "../../Sub/PromptList"
 import vPromptMenu from "../PromptMenu/PromptMenu.vue"
+import axios from "axios"
 
 export default Vue.extend({
     props: {
@@ -439,8 +492,11 @@ export default Vue.extend({
         return {
             inputText: "",
             outputText: "",
-            inputParser: this.promptWork?.data?.parser ?? "midjourney",
+            inputParser: this.promptWork?.data?.parser ?? "stable-diffusion-webui",
             isPNGExporting: false,
+            loading: false,
+            id: "",
+            img: "",
         }
     },
     created() {
@@ -464,6 +520,53 @@ export default Vue.extend({
         },
     },
     methods: {
+        closeHandler() {
+            console.log(11)
+            this.img = null
+        },
+        doGen() {
+            this.loading = true
+            axios
+                .post(
+                    "https://12o94542f8.imdo.co/api/data",
+
+                    {
+                        prompt: this.outputText,
+                    },
+                    {
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                    }
+                )
+                .then((res) => {
+                    console.log(res)
+                    this.id = res.data.id
+                    clearInterval(this.timer)
+                    this.checkStatus()
+                })
+                .catch((err) => {
+                    console.log(err)
+                    this.loading = false
+                    this.img = null
+                })
+        },
+        checkStatus() {
+            var self = this
+            this.timer = setInterval(function () {
+                axios
+                    .get(`https://12o94542f8.imdo.co/api/status/${self.id}`)
+                    .then((res) => {
+                        console.log(res)
+                        if (res.data.status == 1) {
+                            self.img = res.data.message
+                            self.loading = false
+                            clearInterval(self.timer)
+                        }
+                    })
+                    .then()
+            }, 3000)
+        },
         doImportByInputThrottle() {},
         async doImportByInput() {
             console.log("[doImportByInput]")

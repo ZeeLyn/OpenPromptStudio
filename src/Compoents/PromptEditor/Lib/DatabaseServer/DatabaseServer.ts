@@ -23,7 +23,7 @@ export class DatabaseServer {
     }
     async init() {
         // localJson
-        let localPromptDescMap = await (await fetch("./localPromptDefineMap.json")).json()
+        let localPromptDescMap = await (await fetch( "/aigc_prompt/localPromptDefineMap.json")).json()
         // console.log('localPromptDescMap',localPromptDescMap)
         this.localPromptDefineMap = localPromptDescMap
         return true

@@ -4,12 +4,12 @@ import type { VueConstructor } from "vue"
 
 export function getRoutes() {
     return [
+        // {
+        //     path: "/",
+        //     redirect: "/apps/ops/",
+        // },
         {
             path: "/",
-            redirect: "/apps/ops/",
-        },
-        {
-            path: "/apps/ops/",
             name: "Index",
             component: vIndex,
         },
@@ -19,6 +19,6 @@ export function getRoutes() {
 export function getPagesRouter(Vue: VueConstructor) {
     let routes = getRoutes()
     Vue.use(VueRouter)
-    let router = new VueRouter({ mode: "history", routes })
+    let router = new VueRouter({ mode: "hash", routes })
     return router
 }

@@ -1,47 +1,40 @@
 <template>
     <div class="IndexPage">
-        <nav>
-            <a class="logo" href="https://github.com/Moonvy/OpenPromptStudio"><b>OPS</b>/OpenPromptStudio</a>
-            <a class="icon-link" href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">
-                <Icon icon="radix-icons:github-logo"
-            /></a>
-
-            <div class="dict-button-box" @click="toggleDictPad()">
-                提示词词典
-                <button class="icon dict-button"><Icon icon="mingcute:book-4-fill" /></button>
-            </div>
-        </nav>
-        <PromptEditor ref="PromptEditor" :init-prompts="initPrompts" />
+        <el-tabs type="border-card">
+            <el-tab-pane label="图生视频" lazy>
+                <ImageToVideo></ImageToVideo>
+            </el-tab-pane>
+            <el-tab-pane label="文生图" lazy>
+                <nav>
+                    <div class="dict-button-box" @click="toggleDictPad()">
+                        提示词词典
+                        <button class="icon dict-button"><Icon icon="mingcute:book-4-fill" /></button>
+                    </div>
+                </nav>
+                <PromptEditor ref="PromptEditor" :init-prompts="initPrompts" />
+            </el-tab-pane>
+        </el-tabs>
         <section class="PromptDictPad" v-if="needDictPad" v-show="showDictPad">
             <div class="title">
                 <Icon icon="mingcute:book-4-fill" />
                 提示词词典
-                <!--                <a class="github-dict" href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">-->
-                <!--                    <Icon icon="radix-icons:github-logo" />一起维护词典</a-->
-                <!--                >-->
                 <button class="icon close-button" @click="toggleDictPad(false)">
                     <Icon icon="radix-icons:cross-1" />
                 </button>
             </div>
             <PromptDict />
         </section>
-        <footer>
-            <a href="https://github.com/Moonvy/OpenPromptStudio" target="_blank">
-                <img class="icon" src="/icon.svg" /> OpenPromptStudio / v{{ version }} /
-            </a>
-            <a href="https://moonvy.com/?homepage"> made by <img src="./assets/logo_full_cn.svg" /></a>
-        </footer>
     </div>
 </template>
 <style lang="scss">
 .IndexPage {
-    > nav {
+    nav {
         display: flex;
         place-items: center;
-        padding-top: 11px;
-        padding-bottom: 20px;
+        padding-top: 0px;
+        padding-bottom: 0px;
         padding-left: 23px;
-        padding-right: 14px;
+        padding-right: 10px;
         .logo {
             font-family: "JetBrains Mono";
             color: #9f9f9f;
@@ -70,15 +63,15 @@
             place-items: center;
             color: #6161b7;
             text-shadow: 0 1px 1px #ffffff;
-            margin-right: 40px;
+            margin-right: 0px;
             cursor: pointer;
         }
         .dict-button {
             color: #6161b7;
             margin-left: 6px;
-            position: fixed;
-            right: 20px;
-            top: 14px;
+            // position: fixed;
+            // right: 20px;
+            // top: 14px;
             z-index: 50;
         }
     }
@@ -179,6 +172,7 @@ import vPromptEditor from "../../Compoents/PromptEditor/PromptEditor.vue"
 import vPromptDict from "../../Compoents/PromptDict/PromptDict.vue"
 
 import pkg from "../../../package.json"
+import ImageToVideo from "../../Compoents/ImageToVideo.vue"
 export default Vue.extend({
     data() {
         return {
@@ -213,6 +207,7 @@ export default Vue.extend({
     components: {
         PromptEditor: <any>vPromptEditor,
         PromptDict: vPromptDict,
+        ImageToVideo,
     },
     created() {
         this.getPromptsFromUrlQuery()
